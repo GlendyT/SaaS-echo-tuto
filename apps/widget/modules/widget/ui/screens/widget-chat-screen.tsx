@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useThreadMessages, toUIMessages } from "@convex-dev/agent/react";
 import { Button } from "@workspace/ui/components/button";
 import { WidgetHeader } from "../components/widget-header";
@@ -33,11 +33,7 @@ import {
   AIMessageContent,
 } from "@workspace/ui/components/ai/message";
 import { AIResponse } from "@workspace/ui/components/ai/response";
-import {
-  AISuggestion,
-  AISuggestions,
-} from "@workspace/ui/components/ai/suggestion";
-import { FormField } from "@workspace/ui/components/form";
+import { Form,FormField } from "@workspace/ui/components/form";
 import { useInfiniteScroll } from "../../../../../../packages/ui/src/hooks/use-infinite-scroll";
 import { InfiniteScrollTrigger } from "../../../../../../packages/ui/src/components/infinite-scroll-trigger";
 import { DicebearAvatar } from '../../../../../../packages/ui/src/components/dicebear-avatar';
