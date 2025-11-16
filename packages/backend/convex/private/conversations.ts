@@ -1,10 +1,63 @@
 import { ConvexError, v } from "convex/values";
-import { mutation, query } from "../_generated/server";
+import { query } from "../_generated/server";
 import { supportAgent } from "../system/ai/agents/supportAgent";
-import { MessageDoc, saveMessage } from "@convex-dev/agent";
-import { components } from "../_generated/api";
+import { MessageDoc } from "@convex-dev/agent";
 import { paginationOptsValidator, PaginationResult } from "convex/server";
 import { Doc, Id } from "../_generated/dataModel";
+
+export const getOne = query({
+  args: {
+    conversationId: v.id("conversations"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+    const orgId = identity.orgId as string;
+    if (!orgId) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+    const conversation = await ctx.db.get(args.conversationId);
+
+    if (!conversation) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Conversation not found",
+      });
+    }
+
+    if (conversation.organizationId !== orgId) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Invalid organization ID",
+      });
+    }
+
+    const contactSession = await ctx.db.get(
+      conversation.contactSessionId as Id<"contactSessions">
+    );
+    if (!conversation) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Contact session not found",
+      });
+    }
+
+    return {
+      ...conversation,
+      contactSession,
+    };
+  },
+});
 
 export const getMany = query({
   args: {
@@ -59,7 +112,9 @@ export const getMany = query({
       conversations.page.map(async (conversation) => {
         let lastMessage: MessageDoc | null = null;
 
-        const contactSession = await ctx.db.get(conversation.contactSessionId as Id<"contactSessions">);
+        const contactSession = await ctx.db.get(
+          conversation.contactSessionId as Id<"contactSessions">
+        );
         if (!contactSession) {
           return null;
         }
@@ -91,4 +146,3 @@ export const getMany = query({
     };
   },
 });
-
