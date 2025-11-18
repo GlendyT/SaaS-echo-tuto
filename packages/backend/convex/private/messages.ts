@@ -40,7 +40,7 @@ export const enhanceResponse = action({
         {
           role: "user",
           content: args.prompt,
-        }
+        },
       ],
     });
 
@@ -91,6 +91,12 @@ export const create = mutation({
       throw new ConvexError({
         code: "BAD_REQUEST",
         message: "Conversation resolved",
+      });
+    }
+
+    if (conversation.status === "unresolved") {
+      await ctx.db.patch(args.conversationId, {
+        status: "escalated",
       });
     }
 
