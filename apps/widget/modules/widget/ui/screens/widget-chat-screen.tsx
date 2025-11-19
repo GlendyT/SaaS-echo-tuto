@@ -19,7 +19,6 @@ import { api } from "@workspace/backend/_generated/api";
 import {
   AIConversation,
   AIConversationContent,
-  AIConversationScrollButton,
 } from "@workspace/ui/components/ai/conversation";
 import {
   AIInput,
@@ -33,10 +32,10 @@ import {
   AIMessageContent,
 } from "@workspace/ui/components/ai/message";
 import { AIResponse } from "@workspace/ui/components/ai/response";
-import { Form,FormField } from "@workspace/ui/components/form";
-import { useInfiniteScroll } from "../../../../../../packages/ui/src/hooks/use-infinite-scroll";
-import { InfiniteScrollTrigger } from "../../../../../../packages/ui/src/components/infinite-scroll-trigger";
-import { DicebearAvatar } from '../../../../../../packages/ui/src/components/dicebear-avatar';
+import { Form, FormField } from "@workspace/ui/components/form";
+import { useInfiniteScroll } from "@workspace/ui/hooks/use-infinite-scroll";
+import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-trigger";
+import { DicebearAvatar } from "@workspace/ui/components/dicebear-avatar";
 
 const formSchema = z.object({
   message: z.string().min(1, "Message is required"),
@@ -127,6 +126,11 @@ export const WidgetChatScreen = () => {
             ref={topElementRef}
           />
           {toUIMessages(messages.results ?? [])?.map((message) => {
+            const content = (message as any).content;
+            const displayContent = Array.isArray(content)
+              ? content[0]
+              : content || "";
+            
             return (
               <AIMessage
                 from={message.role === "user" ? "user" : "assistant"}
@@ -134,18 +138,15 @@ export const WidgetChatScreen = () => {
               >
                 <AIMessageContent>
                   <AIResponse>
-                    {Array.isArray(message.content)
-                      ? message.content[0]
-                      : message.content}
+                    {displayContent}
                   </AIResponse>
                 </AIMessageContent>
                 {/* TODO: Add avatar component*/}
                 {message.role === "assistant" && (
                   <DicebearAvatar
-                   //imageUrl="/logo.svg"
-                   seed="assistant"
-                   size={32}
-                   badgeImageUrl="/logo.svg"
+                    seed="assistant"
+                    size={32}
+                    badgeImageUrl="/logo.svg"
                   />
                 )}
               </AIMessage>
