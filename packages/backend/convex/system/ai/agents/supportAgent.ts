@@ -1,9 +1,17 @@
 import { openai } from "@ai-sdk/openai";
 import { Agent } from "@convex-dev/agent";
 import { components } from "../../../_generated/api";
+import { SUPPORT_AGENT_PROMPT } from "../constants";
+import { search } from "../tools/search";
+import { escalateConversation } from "../tools/escalatedConversation";
+import { resolveConversation } from "../tools/resolveConversation";
 
 export const supportAgent = new Agent(components.agent, {
   chat: openai.chat("gpt-4o-mini"),
-  instructions: `You are a customer support agent. Use "resolveConversation" tool when user expresses finalization of the conversation.  Use "escalateConversation" tool when user expresses frustration, or requests a human explicity`,
-
+  instructions: SUPPORT_AGENT_PROMPT,
+  tools: {
+    searchTool: search,
+    escalateConversationTool: escalateConversation,
+    resolveConversationTool: resolveConversation,
+  },
 });
