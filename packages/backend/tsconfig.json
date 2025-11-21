@@ -1,17 +1,18 @@
 {
-  "extends": "@workspace/typescript-config/base.json",
   "compilerOptions": {
-    "baseUrl": "",
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
     "paths": {
-      "@workspace/backend/*": [
-        "./convex/*"
-      ]
+      "@workspace/backend/*": ["./convex/*"]
     }
   },
-  "include": [
-    "."
-  ],
+  "include": ["convex/**/*"],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "convex/_generated"
   ]
 }

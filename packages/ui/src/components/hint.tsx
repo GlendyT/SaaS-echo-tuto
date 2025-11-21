@@ -17,8 +17,8 @@ interface HintProps {
 export const Hint = ({
   children,
   text,
-  side = "top",
-  align = "center",
+  //side = "top",
+ // align = "center",
 }: HintProps) => {
   return (
     <TooltipProvider>
