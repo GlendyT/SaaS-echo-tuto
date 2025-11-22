@@ -42,7 +42,7 @@ http.route({
         await clerkClient.organizations.updateOrganization(organizationId, {
           maxAllowedMemberships: newMaxAllowedMemberships,
         });
-
+ 
         await ctx.runMutation(internal.system.subscription.upsert, {
           organizationId,
           status: subscriptions.status,
@@ -51,7 +51,7 @@ http.route({
         break;
       }
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        console.log(`Ignored Clerk webhook event: ${event.type}`);
     }
     return new Response(null, { status: 200 });
   }),
