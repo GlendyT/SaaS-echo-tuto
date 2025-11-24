@@ -112,6 +112,13 @@ export const create = mutation({
         message: "Invalid session",
       });
     }
+
+    const widgetSettings = await ctx.db
+      .query("widgetSettings")
+      .withIndex("by_organization_id", (q) =>
+        q.eq("organizationId", args.organizationId)
+      )
+      .unique();
     //TODO: Replace once functionality for theread creation is present
     const { threadId } = await supportAgent.createThread(ctx, {
       userId: args.organizationId,
@@ -121,8 +128,7 @@ export const create = mutation({
       threadId,
       message: {
         role: "assistant",
-        //TODO LATER MODIFY TO WIDGET SETTINGS INITIAL MESSAGE
-        content: "Hello, how can I help you today?",
+        content: widgetSettings?.greetMessage || "Hello, how can I help you today?",
       },
     });
 
