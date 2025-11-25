@@ -2,13 +2,15 @@
 
 import { Button } from "@workspace/ui/components/button";
 import { WidgetHeader } from "../components/widget-header";
-import { MessageSquareTextIcon } from "lucide-react";
+import { MessageSquareTextIcon, MicIcon, PhoneIcon } from "lucide-react";
 import {
   contactSessionIdAtomFamily,
   conversationIdAtom,
   errorMessageAtom,
+  hasVapiSecretsAtom,
   organizationIdAtom,
   screenAtom,
+  widgetSettingsAtom,
 } from "../../atoms/widget-atoms";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useMutation } from "convex/react";
@@ -21,8 +23,9 @@ export const WidgetSelectionScreen = () => {
   const setErrorMessage = useSetAtom(errorMessageAtom);
   const setConversationId = useSetAtom(conversationIdAtom);
 
+  const widgetSettings = useAtomValue(widgetSettingsAtom);
+  const hasVapiSecrets = useAtomValue(hasVapiSecretsAtom);
   const organizationId = useAtomValue(organizationIdAtom);
-
   const contactSessionId = useAtomValue(
     contactSessionIdAtomFamily(organizationId || "")
   );
@@ -79,8 +82,36 @@ export const WidgetSelectionScreen = () => {
             <span className="">Start chat</span>
           </div>
         </Button>
+
+        {hasVapiSecrets && widgetSettings?.vapiSettings?.assistantId && (
+          <Button
+            className="h-14 w-full justify-between"
+            variant="outline"
+            onClick={() => setScreen("voice")}
+            disabled={isPending}
+          >
+            <div className="flex items-center gap-x-2">
+              <MicIcon className="size-4" />
+              <span className="">Start Voice Call</span>
+            </div>
+          </Button>
+        )}
+
+        {hasVapiSecrets && widgetSettings?.vapiSettings?.phoneNumber && (
+          <Button
+            className="h-14 w-full justify-between"
+            variant="outline"
+            onClick={() => setScreen("contact")}
+            disabled={isPending}
+          >
+            <div className="flex items-center gap-x-2">
+              <PhoneIcon className="size-4" />
+              <span className=""> Call us</span>
+            </div>
+          </Button>
+        )}
       </div>
-      <WidgetFooter/>
+      <WidgetFooter />
     </>
   );
 };
